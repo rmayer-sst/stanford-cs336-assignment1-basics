@@ -24,7 +24,13 @@ classifiers = [
   "Programming Language :: Python :: Implementation :: CPython",
   "Programming Language :: Python :: Implementation :: PyPy",
 ]
-dependencies = []
+dependencies = [
+  "torch",
+  "torchvision",
+  "matplotlib",
+  "numpy",
+  "tqdm"
+]
 
 [project.urls]
 Documentation = "https://github.com/Ron Mayer/copilot-test#readme"
