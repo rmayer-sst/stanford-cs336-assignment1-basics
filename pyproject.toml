@@ -11,7 +11,7 @@ requires-python = ">=3.8"
 license = "MIT"
 keywords = []
 authors = [
-  { name = "Ron Mayer", email = "rmayer@shotspotter.com" },
+  { name = "Claude and ChatGPT", email = "they-dont-have-one@example.com" },
 ]
 classifiers = [
   "Development Status :: 4 - Beta",
@@ -33,9 +33,6 @@ dependencies = [
 ]
 
 [project.urls]
-Documentation = "https://github.com/Ron Mayer/copilot-test#readme"
-Issues = "https://github.com/Ron Mayer/copilot-test/issues"
-Source = "https://github.com/Ron Mayer/copilot-test"
 
 [tool.hatch.version]
 path = "src/copilot_test/__about__.py"
