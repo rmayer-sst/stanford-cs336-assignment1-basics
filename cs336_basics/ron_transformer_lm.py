@@ -51,13 +51,17 @@ class TransformerLM(nn.Module):
         self.norm = RMSNorm(d_model)
         self.head = Linear(d_model,vocab_size)
 
-    def forward(self,x):
+    def forward(self, x, return_attention: bool = False):
         #print("in TransformerLLM x is ",x)
         x = self.embed(x)
+        all_attn_weights = []
         for xf in self.xform:
-            x = xf(x)
+            x, attn_weights = xf(x, return_attention=True)
+            all_attn_weights.append(attn_weights)
         x = self.norm(x)
         x = self.head(x)
+        if return_attention:
+            return x, all_attn_weights
         return x
 
 

@@ -32,7 +32,11 @@ def cross_entropy(
     """
 
     # Subtract the largest element for numerical stability.
-    maxes,_idxs = einx.max("... [vocab]",predicted_logits) # Why does it choke with ,keepdims=True ?
+    # Torch 2.6 and old einx
+    #maxes,_idxs = einx.max("... [vocab]",predicted_logits) # Why does it choke with ,keepdims=True ?
+    # Torch 2.7 and new einx
+    maxes = einx.max("... [vocab]",predicted_logits) # Why does it choke with ,keepdims=True ?
+    
     maxes = einx.rearrange("... -> ... 1", maxes) # put the dim back
     assert isinstance(maxes,Tensor) # avoid vscode warning
     subtracted = predicted_logits - maxes

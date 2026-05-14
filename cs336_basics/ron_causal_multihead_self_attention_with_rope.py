@@ -37,7 +37,7 @@ class CausalMultiheadSelfAttentionWithRope(torch.nn.Module):
         triangle_mask = idx[:, None] >= idx[None, :]     # [L, L], boolean
         return triangle_mask
 
-    def forward(self,x:Tensor,  token_positions:Tensor):
+    def forward(self, x:Tensor, token_positions:Tensor, return_attention:bool = False):
         """
             From the assignment:
                 in_features (Float[Tensor, "... sequence_length d_in"]): Tensor to run your implementation on.
@@ -58,8 +58,10 @@ class CausalMultiheadSelfAttentionWithRope(torch.nn.Module):
 
         triangle_mask = self.make_a_triangle_mask(sequence_length=x.shape[-2],device=x.device)
 
-        attn_output = scaled_dot_product_attention(k=k, q=q, v=v, mask=triangle_mask)
+        attn_output, attn_weights = scaled_dot_product_attention(k=k, q=q, v=v, mask=triangle_mask, return_attention=True)
 
         attn_output = einx.rearrange("... heads seq d_v -> ... seq (heads d_v)",attn_output)
         output = self.o_proj(attn_output)
+        if return_attention:
+            return output, attn_weights
         return output

@@ -9,7 +9,8 @@ def scaled_dot_product_attention(
         q:Tensor, # (batch_size, ..., seq_len, d_k) # n×dk
         k:Tensor, # (batch_size, ..., seq_len, d_k) # m×dk
         v:Tensor, # (batch_size, ..., seq_len, d_v) # m×dv
-        mask: Tensor|None # (n×m)
+        mask: Tensor|None, # (n×m)
+        return_attention: bool = False,
 ):
     """
         Would have been hard if not for: 
@@ -31,4 +32,6 @@ def scaled_dot_product_attention(
         a = a.masked_fill(~mask, -float('inf'))
     a = einx.softmax("... q [k]", a) # a = softmax(a,i=-1)
     x = einx.dot("... q k, ... k d -> ... q d", a, v)
+    if return_attention:
+        return x, a
     return x

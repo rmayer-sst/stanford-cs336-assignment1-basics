@@ -110,14 +110,15 @@ class TransformerBlock(nn.Module):
         self.ffn = SwiGLU(d_model, d_ff)
 
 
-    def forward(self, x: Float[Tensor, "batch sequence_length d_model"]):
+    def forward(self, x: Float[Tensor, "batch sequence_length d_model"], return_attention: bool = False):
         """
             To be concrete, the first half (the first ‘sub-layer’) of the Transformer 
             block should be implementing the following set of updates to 
             produce an output y from an input x:
             y = x + MultiHeadSelfAttention(RMSNorm(x)). (15)
         """
-        y = x + self.cmsawr.forward(self.ln1(x), torch.arange(x.shape[1]))
+        attn_out, attn_weights = self.cmsawr.forward(self.ln1(x), torch.arange(x.shape[1]), return_attention=True)
+        y = x + attn_out
         """
             Note -- in MoE architectures, only the following expression would change.
             https://raw.githubusercontent.com/stanford-cs336/spring2025-lectures/master/nonexecutable/2025%20Lecture%204%20-%20MoEs.pdf
@@ -126,4 +127,7 @@ class TransformerBlock(nn.Module):
             That's the feedforward network they're talking about.
         """
         z = self.ffn(self.ln2(y))
-        return y + z
+        output = y + z
+        if return_attention:
+            return output, attn_weights
+        return output
